@@ -44,12 +44,10 @@
             border-radius: 5px;
             cursor: pointer;
         }
-        button:disabled {
-            background-color: #ccc;
-        }
         .result {
             text-align: center;
             margin-top: 20px;
+            white-space: pre-wrap; /* 支持换行 */
         }
     </style>
 </head>
@@ -58,7 +56,7 @@
     <div class="container">
         <form id="testForm">
             <div id="questions"></div>
-            <button type="button" id="submitButton" onclick="submitTest()" disabled>提交</button>
+            <button type="button" id="submitButton" onclick="submitTest()">提交</button>
         </form>
         <div id="result" class="result"></div>
     </div>
@@ -67,68 +65,53 @@
         // 汉字数据（包含完整字库）
         const characterData = {
             "categories": [
-                {"name": "数字与时间类", "characters": ["一 yī", "二 èr", "三 sān", "四 sì", "五 wǔ", "六 liù", "七 qī", "八 bā", "九 jiǔ", "十 shí", 
-                                     "百 bǎi", "千 qiān", "万 wàn", "年 nián", "月 yuè", "日 rì", "时 shí", "分 fēn", "秒 miǎo", 
-                                     "春 chūn", "夏 xià", "秋 qiū", "冬 dōng", "早 zǎo", "中 zhōng", "晚 wǎn", "昨 zuó", "今 jīn", "明 míng", "后 hòu"]},
-                {"name": "家庭与人物类", "characters": ["爸 bà", "妈 mā", "哥 gē", "姐 jiě", "弟 dì", "妹 mèi", "爷 yé", "奶 nǎi", 
-                                     "父 fù", "母 mǔ", "子 zǐ", "女 nǚ", "工 gōng", "农 nóng", "兵 bīng", "师 shī", "生 shēng", 
-                                     "医 yī", "友 yǒu", "朋 péng", "主 zhǔ", "客 kè", "头 tóu", "手 shǒu", "脚 jiǎo", "眼 yǎn", 
-                                     "耳 ěr", "口 kǒu", "鼻 bí", "牙 yá", "脸 liǎn", "身 shēn"]},
-                {"name": "物品类", "characters": ["门 mén", "窗 chuāng", "桌 zhuō", "椅 yǐ", "床 chuáng", "灯 dēng", "书 shū", "本 běn", 
-                                   "笔 bǐ", "纸 zhǐ", "杯 bēi", "碗 wǎn", "筷 kuài", "刀 dāo", "米 mǐ", "饭 fàn", "菜 cài", "果 guǒ", 
-                                   "糖 táng", "茶 chá", "酒 jiǔ", "肉 ròu", "鱼 yú", "蛋 dàn", "汤 tāng", "衣 yī", "裤 kù", "鞋 xié", 
-                                   "帽 mào", "袜 wà", "巾 jīn", "包 bāo", "袋 dài"]},
-                {"name": "动作类", "characters": ["走 zǒu", "跑 pǎo", "跳 tiào", "吃 chī", "喝 hē", "看 kàn", "听 tīng", "说 shuō", 
-                                   "写 xiě", "读 dú", "拿 ná", "放 fàng", "开 kāi", "关 guān", "学 xué", "教 jiào", "做 zuò", "打 dǎ", 
-                                   "拍 pāi", "推 tuī", "拉 lā", "搬 bān", "抬 tái", "抱 bào", "背 bèi", "提 tí", "挑 tiāo", "抓 zhuā", 
-                                   "摸 mō", "爱 ài", "恨 hèn", "喜 xǐ", "怒 nù", "哀 āi", "乐 lè", "哭 kū", "笑 xiào", "问 wèn", "答 dá"]},
-                {"name": "自然现象类", "characters": ["天 tiān", "地 dì", "日 rì", "月 yuè", "星 xīng", "云 yún", "风 fēng", "雨 yǔ", 
-                                    "雷 léi", "电 diàn", "雪 xuě", "霜 shuāng", "雾 wù", "霞 xiá", "山 shān", "水 shuǐ", "河 hé", 
-                                    "海 hǎi", "湖 hú", "田 tián", "土 tǔ", "石 shí", "沙 shā", "草 cǎo", "木 mù", "花 huā", "树 shù"]},
-                {"name": "抽象概念类", "characters": ["大 dà", "小 xiǎo", "多 duō", "少 shǎo", "长 cháng", "短 duǎn", "高 gāo", "低 dī", 
-                                    "胖 pàng", "瘦 shòu", "快 kuài", "慢 màn", "冷 lěng", "热 rè", "新 xīn", "旧 jiù", "好 hǎo", 
-                                    "坏 huài", "美 měi", "丑 chǒu", "真 zhēn", "假 jiǎ", "对 duì", "错 cuò", "难 nán", "易 yì", 
-                                    "轻 qīng", "重 zhòng", "深 shēn", "浅 qiǎn", "爱 ài", "恨 hèn", "善 shàn", "恶 è", "光 guāng", 
-                                    "影 yǐng", "声 shēng", "色 sè", "力 lì", "能 néng", "心 xīn", "意 yì", "情 qíng", "理 lǐ"]},
-                {"name": "社会与文化类", "characters": ["家 jiā", "校 xiào", "城 chéng", "乡 xiāng", "街 jiē", "道 dào", "桥 qiáo", 
-                                     "楼 lóu", "庙 miào", "寺 sì", "店 diàn", "馆 guǎn", "课 kè", "班 bān", "会 huì", "节 jié", 
-                                     "礼 lǐ", "庆 qìng", "赛 sài", "游 yóu", "戏 xì", "玩 wán", "书 shū", "画 huà", "诗 shī", "文 wén", 
-                                     "歌 gē", "舞 wǔ", "戏 xì", "剧 jù", "琴 qín", "棋 qí"]},
-                {"name": "动物与植物类", "characters": ["猫 māo", "狗 gǒu", "牛 niú", "羊 yáng", "鸡 jī", "鸭 yā", "鱼 yú", "鸟 niǎo", 
-                                     "兔 tù", "鼠 shǔ", "虎 hǔ", "狼 láng", "猴 hóu", "蛇 shé", "虫 chóng", "草 cǎo", "花 huā", 
-                                     "树 shù", "竹 zhú", "松 sōng", "柏 bǎi", "柳 liǔ", "梅 méi", "桃 táo", "李 lǐ", "果 guǒ", 
-                                     "叶 yè", "根 gēn", "枝 zhī"]},
-                {"name": "方位与方向类", "characters": ["上 shàng", "下 xià", "左 zuǒ", "右 yòu", "前 qián", "后 hòu", "里 lǐ", "外 wài", 
-                                     "中 zhōng", "边 biān", "旁 páng", "东 dōng", "南 nán", "西 xī", "北 běi", "内 nèi", "外 wài"]},
-                {"name": "其他常用字", "characters": ["我 wǒ", "你 nǐ", "他 tā", "她 tā", "它 tā", "这 zhè", "那 nà", "谁 shuí", 
-                                   "和 hé", "与 yǔ", "或 huò", "而 ér", "但 dàn", "因 yīn", "为 wèi", "以 yǐ", "于 yú", "在 zài", 
-                                   "从 cóng", "向 xiàng", "到 dào", "何 hé", "哪 nǎ", "谁 shuí", "怎 zěn", "么 me", "几 jǐ", "多 duō", "少 shǎo"]}
+                {"name": "数字与时间类", "characters": ["一 yī", "二 èr", "三 sān", "四 sì", "五 wǔ", "六 liù", "七 qī", "八 bā", "九 jiǔ", "十 shí"]},
+                {"name": "家庭与人物类", "characters": ["爸 bà", "妈 mā", "哥 gē", "姐 jiě", "弟 dì", "妹 mèi", "爷 yé", "奶 nǎi", "父 fù", "母 mǔ"]},
+                {"name": "物品类", "characters": ["门 mén", "窗 chuāng", "桌 zhuō", "椅 yǐ", "床 chuáng", "灯 dēng", "书 shū", "本 běn", "笔 bǐ", "纸 zhǐ"]},
+                {"name": "动作类", "characters": ["走 zǒu", "跑 pǎo", "跳 tiào", "吃 chī", "喝 hē", "看 kàn", "听 tīng", "说 shuō", "写 xiě", "读 dú"]},
+                {"name": "自然现象类", "characters": ["天 tiān", "地 dì", "日 rì", "月 yuè", "星 xīng", "云 yún", "风 fēng", "雨 yǔ", "雷 léi", "电 diàn"]},
+                {"name": "抽象概念类", "characters": ["大 dà", "小 xiǎo", "多 duō", "少 shǎo", "长 cháng", "短 duǎn", "高 gāo", "低 dī", "胖 pàng", "瘦 shòu"]},
+                {"name": "社会与文化类", "characters": ["家 jiā", "校 xiào", "城 chéng", "乡 xiāng", "街 jiē", "道 dào", "桥 qiáo", "楼 lóu", "庙 miào", "寺 sì"]},
+                {"name": "动物与植物类", "characters": ["猫 māo", "狗 gǒu", "牛 niú", "羊 yáng", "鸡 jī", "鸭 yā", "鱼 yú", "鸟 niǎo", "兔 tù", "鼠 shǔ"]},
+                {"name": "方位与方向类", "characters": ["上 shàng", "下 xià", "左 zuǒ", "右 yòu", "前 qián", "后 hòu", "里 lǐ", "外 wài", "中 zhōng", "边 biān"]},
+                {"name": "其他常用字", "characters": ["我 wǒ", "你 nǐ", "他 tā", "她 tā", "它 tā", "这 zhè", "那 nà", "谁 shuí", "和 hé", "与 yǔ"]}
             ]
         };
 
-        // 随机生成测试问题
+        // 随机生成测试问题（20 题）
         function generateQuestions() {
             const questionsDiv = document.getElementById('questions');
             let questionsHTML = '';
             const selectedChars = [];
+            const categoryStats = {};
 
-            // 从每个分类中随机选择至少 2 个字
+            // 初始化分类统计
             characterData.categories.forEach(category => {
-                const chars = category.characters.sort(() => Math.random() - 0.5).slice(0, 2);
-                selectedChars.push(...chars);
+                categoryStats[category.name] = { total: 0, correct: 0 };
             });
 
-            // 补充剩余的字符，直到总数为 30
-            while (selectedChars.length < 30) {
+            // 从每个分类中随机选择至少 1 个字
+            characterData.categories.forEach(category => {
+                const chars = category.characters.sort(() => Math.random() - 0.5).slice(0, 1);
+                selectedChars.push(...chars);
+                categoryStats[category.name].total += chars.length;
+            });
+
+            // 补充剩余的字符，直到总数为 20
+            while (selectedChars.length < 20) {
                 const randomCategory = characterData.categories[Math.floor(Math.random() * characterData.categories.length)];
                 const randomChar = randomCategory.characters[Math.floor(Math.random() * randomCategory.characters.length)];
                 if (!selectedChars.includes(randomChar)) {
                     selectedChars.push(randomChar);
+                    categoryStats[randomCategory.name].total++;
                 }
             }
 
             // 打乱顺序
             selectedChars.sort(() => Math.random() - 0.5);
+
+            // 保存选中的题目
+            window.selectedChars = selectedChars;
 
             // 生成题目
             selectedChars.forEach((char, index) => {
@@ -167,52 +150,95 @@
         // 提交表单并计算得分
         function submitTest() {
             let score = 0;
-            let total = 0;
+            const totalQuestions = 20;
             const form = document.getElementById('testForm');
+            const categoryStats = {};
+
+            // 初始化分类统计
+            characterData.categories.forEach(category => {
+                categoryStats[category.name] = { total: 0, correct: 0 };
+            });
+
             Array.from(form.elements).forEach(element => {
                 if (element.type === 'radio' && element.checked) {
-                    total++;
                     const questionIndex = element.name.split('_')[1];
-                    const correctAnswer = selectedChars[questionIndex].split(' ')[1];
-                    if (element.value === correctAnswer) score++;
+                    const [character, correctPinyin] = window.selectedChars[questionIndex].split(' ');
+                    const category = getCategoryForCharacter(character); // 获取字符所属分类
+                    categoryStats[category].total++;
+                    if (element.value === correctPinyin) {
+                        score++;
+                        categoryStats[category].correct++;
+                    }
                 }
             });
 
-            const resultDiv = document.getElementById('result');
-            const accuracy = (score / total) * 100;
+            const accuracy = (score / totalQuestions) * 100;
 
-            let advice = '';
-            if (accuracy >= 80) {
-                advice = '您的汉字识字能力很棒！继续保持学习。';
-            } else if (accuracy >= 50) {
-                advice = '您的汉字识字能力不错，但还有提升空间。建议多练习生僻字。';
-            } else {
-                advice = '您的汉字识字能力需要加强。建议从基础开始，逐步积累。';
-            }
+            // 动态生成测试报告
+            const report = generateReport(categoryStats, totalQuestions, score);
 
-            resultDiv.innerHTML = `
-                <h2>测试报告</h2>
-                <p>总题数：${total}</p>
-                <p>正确题数：${score}</p>
-                <p>正确率：${accuracy.toFixed(2)}%</p>
-                <p>学习建议：${advice}</p>
-            `;
+            // 显示测试报告
+            document.getElementById('result').innerText = report;
+
+            // 禁用提交按钮
+            document.getElementById('submitButton').disabled = true;
         }
 
-        // 监听选项变化，启用提交按钮
-        function enableSubmitButton() {
-            const form = document.getElementById('testForm');
-            const allQuestionsAnswered = Array.from(form.elements).every(element => {
-                return element.type !== 'radio' || element.checked;
-            });
-            document.getElementById('submitButton').disabled = !allQuestionsAnswered;
+        // 根据字符获取所属分类
+        function getCategoryForCharacter(character) {
+            for (const category of characterData.categories) {
+                if (category.characters.some(char => char.startsWith(character))) {
+                    return category.name;
+                }
+            }
+            return "未知分类";
+        }
+
+        // 生成个性化测试报告
+        function generateReport(categoryStats, totalQuestions, correctCount) {
+            const accuracy = (correctCount / totalQuestions) * 100;
+
+            let report = `### 测试报告 🎉\n\n`;
+            report += `**总题数：${totalQuestions}**\n`;
+            report += `**正确题数：${correctCount}**\n`;
+            report += `**正确率：${accuracy.toFixed(2)}%**\n\n`;
+
+            // 根据正确率调整语气
+            if (accuracy >= 80) {
+                report += `太棒了！你的汉字识字能力非常出色！🎉\n`;
+            } else if (accuracy >= 50) {
+                report += `不错哦！你已经掌握了不少常用汉字，继续加油！💪\n`;
+            } else {
+                report += `别灰心！学习汉字是一个慢慢积累的过程，你已经迈出了重要的一步！🌟\n`;
+            }
+
+            // 分析分类表现
+            report += `\n#### 你的强项 💪\n`;
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0 && stats.correct / stats.total >= 0.7) {
+                    report += `- **${category}**：你在这个分类中表现很棒，答对了 ${stats.correct}/${stats.total} 题！\n`;
+                }
+            }
+
+            report += `\n#### 需要加油的地方 💡\n`;
+            for (const [category, stats] of Object.entries(categoryStats)) {
+                if (stats.total > 0 && stats.correct / stats.total < 0.7) {
+                    report += `- **${category}**：这个分类还需要多练习哦，答对了 ${stats.correct}/${stats.total} 题。\n`;
+                }
+            }
+
+            // 提供学习建议
+            report += `\n#### 学习小建议 🎯\n`;
+            report += `- 复习这次测试中答错的题目，把那些汉字写一写、读一读。\n`;
+            report += `- 每天学习一个分类，比如“自然现象类”可以结合天气观察来记忆。\n`;
+            report += `- 找一些简单的短文或故事书来读，遇到不认识的字可以查一查。\n`;
+
+            return report;
         }
 
         // 初始化页面
         window.onload = () => {
             generateQuestions();
-            document.getElementById('testForm').addEventListener('change', enableSubmitButton);
         };
     </script>
-</body>
-</html>
+</body
