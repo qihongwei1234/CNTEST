@@ -8,7 +8,7 @@
     <style>
             /* 全局样式 */
             body {
-                font-family: 'Noto Sans SC', sans-serif;
+                font-family: 'Source Han Sans';
                 background: linear-gradient(to bottom, #f0f8ff, #e6f7ff);
                 color: #333;
                 line-height: 1.6;
@@ -20,15 +20,19 @@
                 align-items: center;
             }
             h1 {
-                font-size: 36px;
-                color: #333;
-                font-weight: bold;
-                background-color: #f9f9f9;
-                padding: 10px;
-                border-radius: 5px;
                 text-align: center;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin: 20px 0;
+                font-size: 36px;
+                font-weight: normal;
+                color: #ffffff; /* 文字颜色为白色 */
+                background-color: #4c85c3; /* 背景为蓝色 */
+                padding: 15px 30px; /* 内边距 */
+                border-radius: 5px; /* 圆角效果 */
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0); /* 阴影效果 */
+                text-transform: uppercase; /* 文字大写 */
+                letter-spacing: 2px; /* 字母间距 */
             }
+            
             .container {
                 width: 90%;
                 max-width: 600px;
@@ -39,7 +43,7 @@
             }
             /* 按钮样式 */
             button {
-                background-color: #007BFF;
+                background-color: #4c85c3;
                 color: white;
                 border: none;
                 border-radius: 25px;
@@ -66,7 +70,7 @@
             /* 测试报告卡片样式 */
             .report-card {
                 background: #f9f9f9;
-                border-left: 5px solid #007BFF;
+                border-left: 5px solid #4c85c3;
                 padding: 20px;
                 margin-top: 20px;
             }
@@ -76,10 +80,10 @@
                 margin-top: 10px;
             }
             .feedback.correct {
-                color: green;
+                color: rgb(61, 131, 61);
             }
             .feedback.wrong {
-                color: red;
+                color: rgb(205, 66, 66);
             }
 
             /* 响应式设计 */
